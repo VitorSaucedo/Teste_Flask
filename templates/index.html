@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <form method="POST" action="/" class="mb-4 task-form">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="content" placeholder="Adicionar nova tarefa..." required>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-plus me-1"></i> Adicionar
+                </button>
+            </div>
+            <div class="task-form-details">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="category" class="form-label">Categoria</label>
+                            <select name="category" id="category" class="form-select">
+                                {% for category in categories %}
+                                <option value="{{ category }}">{{ category }}</option>
+                                {% endfor %}
+                                <option value="Nova">+ Nova Categoria</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="priority" class="form-label">Prioridade</label>
+                            <select name="priority" id="priority" class="form-select">
+                                <option value="Alta">Alta</option>
+                                <option value="Média" selected>Média</option>
+                                <option value="Baixa">Baixa</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="due_date" class="form-label">Data de Vencimento</label>
+                            <input type="date" class="form-control" name="due_date" id="due_date">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="tags" class="form-label">Tags (separadas por vírgula)</label>
+                            <input type="text" class="form-control" name="tags" id="tags" placeholder="trabalho, urgente, etc">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="description" class="form-label">Descrição</label>
+                    <textarea class="form-control" name="description" id="description" rows="2" placeholder="Detalhes adicionais da tarefa..."></textarea>
+                </div>
+                <div class="text-end">
+                    <button type="button" class="btn btn-sm btn-outline-secondary toggle-form-details">
+                        <i class="fas fa-chevron-up"></i> Ocultar detalhes
+                    </button>
+                </div>
+            </div>
+            <div class="text-end mt-2">
+                <button type="button" class="btn btn-sm btn-outline-primary toggle-form-details show-details-btn">
+                    <i class="fas fa-chevron-down"></i> Mostrar detalhes
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary bg-opacity-75 text-white">
+                <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filtros</h5>
+            </div>
+            <div class="card-body">
+                <form action="/" method="GET" class="mb-3">
+                    <div class="mb-3">
+                        <label class="form-label">Categoria</label>
+                        <select name="category" class="form-select form-select-sm">
+                            <option value="">Todas</option>
+                            {% for category in categories %}
+                            <option value="{{ category }}" {% if request.args.get('category') == category %}selected{% endif %}>{{ category }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Prioridade</label>
+                        <select name="priority" class="form-select form-select-sm">
+                            <option value="">Todas</option>
+                            <option value="Alta" {% if request.args.get('priority') == 'Alta' %}selected{% endif %}>Alta</option>
+                            <option value="Média" {% if request.args.get('priority') == 'Média' %}selected{% endif %}>Média</option>
+                            <option value="Baixa" {% if request.args.get('priority') == 'Baixa' %}selected{% endif %}>Baixa</option>
+                        </select>
+                    </div>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-sm btn-primary">Aplicar</button>
+                        <a href="/" class="btn btn-sm btn-outline-secondary">Limpar</a>
+                    </div>
+                </form>
+                <hr>
+                <form action="/search" method="GET" class="d-flex">
+                    <input type="text" name="q" class="form-control form-control-sm me-2" placeholder="Buscar tarefas..." value="{{ search_query or '' }}">
+                    <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-3 d-flex justify-content-between align-items-center">
+    <div>
+        {% if search_query %}
+        <h6 class="mb-0"><i class="fas fa-search me-2"></i>Resultados para: "{{ search_query }}"</h6>
+        {% else %}
+        <h6 class="mb-0"><i class="fas fa-list me-2"></i>Sua Lista de Tarefas</h6>
+        {% endif %}
+    </div>
+    <div>
+        <a href="/statistics" class="btn btn-sm btn-outline-primary"><i class="fas fa-chart-bar me-1"></i>Estatísticas</a>
+    </div>
+</div>
+
+{% if tasks|length < 1 %}
+<div class="text-center py-4">
+    <div class="mb-3">
+        <i class="fas fa-tasks fa-3x text-muted"></i>
+    </div>
+    <h5 class="text-muted">Sua lista está vazia</h5>
+    <p class="text-muted small">Adicione sua primeira tarefa usando o campo acima</p>
+</div>
+{% else %}
+<div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
+    <h6 class="mb-0 text-muted">{{ tasks|length }} {% if tasks|length == 1 %}tarefa{% else %}tarefas{% endif %}</h6>
+</div>
+<div class="list-group">
+    {% for task in tasks %}
+    <div class="list-group-item todo-item {% if task.priority == 'Alta' %}border-start border-danger border-3{% endif %}">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center flex-grow-1">
+                <a href="{{ url_for('complete', id=task.id) }}" class="me-3 text-decoration-none">
+                    {% if task.completed %}
+                    <span class="badge rounded-pill bg-success">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    {% else %}
+                    <span class="badge rounded-pill bg-secondary">
+                        <i class="fas fa-circle"></i>
+                    </span>
+                    {% endif %}
+                </a>
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center">
+                        <span class="{% if task.completed %}completed{% endif %} task-title">{{ task.content }}</span>
+                        {% if task.priority == 'Alta' %}
+                        <span class="ms-2 badge bg-danger">Alta</span>
+                        {% elif task.priority == 'Baixa' %}
+                        <span class="ms-2 badge bg-info">Baixa</span>
+                        {% endif %}
+                        {% if task.category != 'Geral' %}
+                        <span class="ms-2 badge bg-primary bg-opacity-75">{{ task.category }}</span>
+                        {% endif %}
+                    </div>
+                    {% if task.description %}
+                    <p class="mb-0 small text-muted task-description">{{ task.description }}</p>
+                    {% endif %}
+                    <div class="small">
+                        {% if task.due_date %}
+                        <span class="me-3 {% if task.due_date < today and not task.completed %}text-danger{% endif %}">
+                            <i class="far fa-calendar-alt me-1"></i>
+                            {{ task.due_date.strftime('%d/%m/%Y') }}
+                            {% if task.due_date < today and not task.completed %}
+                            <i class="fas fa-exclamation-circle" title="Atrasada"></i>
+                            {% endif %}
+                        </span>
+                        {% endif %}
+                        {% if task.tags %}
+                        <span>
+                            {% for tag in task.tags.split(',') %}
+                            <span class="badge bg-secondary bg-opacity-50 me-1">{{ tag.strip() }}</span>
+                            {% endfor %}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="btn-group">
+                <a href="{{ url_for('update', id=task.id) }}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="{{ url_for('delete', id=task.id) }}" class="btn btn-sm btn-outline-danger" 
+                   onclick="return confirm('Tem certeza que deseja excluir esta tarefa?')">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicialmente oculta os detalhes do formulário
+    const formDetails = document.querySelector('.task-form-details');
+    const showDetailsBtn = document.querySelector('.show-details-btn');
+    
+    if (formDetails && showDetailsBtn) {
+        formDetails.style.display = 'none';
+        
+        // Toggle para mostrar/ocultar os detalhes do formulário
+        document.querySelectorAll('.toggle-form-details').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                if (formDetails.style.display === 'none') {
+                    formDetails.style.display = 'block';
+                    showDetailsBtn.style.display = 'none';
+                } else {
+                    formDetails.style.display = 'none';
+                    showDetailsBtn.style.display = 'block';
+                }
+            });
+        });
+    }
+    
+    // Lidar com a opção "Nova" no select de categorias
+    const categorySelect = document.getElementById('category');
+    if (categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            if (this.value === 'Nova') {
+                const newCategory = prompt('Digite o nome da nova categoria:');
+                if (newCategory && newCategory.trim() !== '') {
+                    // Adiciona a nova opção
+                    const newOption = document.createElement('option');
+                    newOption.value = newCategory.trim();
+                    newOption.text = newCategory.trim();
+                    
+                    // Insere antes da opção "Nova"
+                    this.insertBefore(newOption, this.options[this.options.length - 1]);
+                    
+                    // Seleciona a nova opção
+                    this.value = newCategory.trim();
+                } else {
+                    // Se cancelar ou digitar vazio, volta para a primeira opção
+                    this.selectedIndex = 0;
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

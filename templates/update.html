@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Editar Tarefa</h5>
+    </div>
+    <div class="card-body">
+        <form action="/update/{{ task.id }}" method="POST">
+            <div class="mb-3">
+                <label for="content" class="form-label">Título da Tarefa</label>
+                <input type="text" name="content" id="content" class="form-control" value="{{ task.content }}" required>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="category" class="form-label">Categoria</label>
+                        <select name="category" id="category" class="form-select">
+                            {% for category in categories %}
+                            <option value="{{ category }}" {% if task.category == category %}selected{% endif %}>{{ category }}</option>
+                            {% endfor %}
+                            <option value="Nova">+ Nova Categoria</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="priority" class="form-label">Prioridade</label>
+                        <select name="priority" id="priority" class="form-select">
+                            <option value="Alta" {% if task.priority == 'Alta' %}selected{% endif %}>Alta</option>
+                            <option value="Média" {% if task.priority == 'Média' %}selected{% endif %}>Média</option>
+                            <option value="Baixa" {% if task.priority == 'Baixa' %}selected{% endif %}>Baixa</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="due_date" class="form-label">Data de Vencimento</label>
+                        <input type="date" class="form-control" name="due_date" id="due_date" 
+                               value="{{ task.due_date.strftime('%Y-%m-%d') if task.due_date else '' }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="tags" class="form-label">Tags (separadas por vírgula)</label>
+                        <input type="text" class="form-control" name="tags" id="tags" 
+                               value="{{ task.tags }}" placeholder="trabalho, urgente, etc">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="description" class="form-label">Descrição</label>
+                <textarea class="form-control" name="description" id="description" rows="3" 
+                          placeholder="Detalhes adicionais da tarefa...">{{ task.description }}</textarea>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a href="/" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Atualizar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Lidar com a opção "Nova" no select de categorias
+    const categorySelect = document.getElementById('category');
+    if (categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            if (this.value === 'Nova') {
+                const newCategory = prompt('Digite o nome da nova categoria:');
+                if (newCategory && newCategory.trim() !== '') {
+                    // Adiciona a nova opção
+                    const newOption = document.createElement('option');
+                    newOption.value = newCategory.trim();
+                    newOption.text = newCategory.trim();
+                    
+                    // Insere antes da opção "Nova"
+                    this.insertBefore(newOption, this.options[this.options.length - 1]);
+                    
+                    // Seleciona a nova opção
+                    this.value = newCategory.trim();
+                } else {
+                    // Se cancelar ou digitar vazio, volta para a opção anterior
+                    this.value = "{{ task.category }}";
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %} 
