@@ -1,0 +1,19 @@
+{% if tasks %}
+    {% if search_term %}
+        <h2>Resultados da busca por: "{{ search_term }}"</h2>
+    {% else %}
+        <h2>Lista de Tarefas</h2>
+    {% endif %}
+    
+    <div class="task-list">
+        {% for task in tasks %}
+            {% include '_task_item.html' %}
+        {% endfor %}
+    </div>
+{% else %}
+    {% if search_term %}
+        <p>Nenhuma tarefa encontrada para: "{{ search_term }}"</p>
+    {% else %}
+        <p>Você não tem tarefas pendentes. Crie uma nova!</p>
+    {% endif %}
+{% endif %} 

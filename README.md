@@ -67,11 +67,11 @@ Uma aplicação completa de lista de tarefas desenvolvida com Flask, proporciona
 
 ## Futuras Melhorias
 
-- Sistema de autenticação de usuários
-- Subtarefas
-- Sincronização com calendário
+- Sistema de autenticação de usuários (Implementado)
+- Subtarefas (Implementado)
+- Integração com calendário
 - Notificações e lembretes
-- Aplicativo móvel
+- Versão mobile
 
 ## Licença
 

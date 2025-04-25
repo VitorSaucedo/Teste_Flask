@@ -79,21 +79,18 @@
                                     {% for cat in category_stats %}
                                     <tr>
                                         <td>{{ cat.name }}</td>
-                                        <td>{{ cat.total }}</td>
+                                        <td>{{ cat.count }}</td>
                                         <td>{{ cat.completed }}</td>
                                         <td>
                                             <div class="progress" style="height: 8px;">
-                                                <div class="progress-bar 
-                                                {% if cat.completion_rate < 50 %}bg-danger
-                                                {% elif cat.completion_rate >= 80 %}bg-success
-                                                {% else %}bg-warning{% endif %}" 
-                                                role="progressbar" 
-                                                style="width: {{ cat.completion_rate }}%;" 
-                                                aria-valuenow="{{ cat.completion_rate }}" 
-                                                aria-valuemin="0" 
-                                                aria-valuemax="100"></div>
+                                                <div class="progress-bar {% if cat.percentage < 50 %}bg-danger{% elif cat.percentage >= 80 %}bg-success{% else %}bg-warning{% endif %}" 
+                                                    role="progressbar" 
+                                                    style="width: {{ cat.percentage }}%;" 
+                                                    aria-valuenow="{{ cat.percentage }}" 
+                                                    aria-valuemin="0" 
+                                                    aria-valuemax="100"></div>
                                             </div>
-                                            <small>{{ cat.completion_rate }}%</small>
+                                            <small>{{ cat.percentage }}%</small>
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -117,15 +114,16 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- Dados para os gráficos -->
-<script>
+<script type="text/javascript">
+// Espera o DOM carregar
 document.addEventListener('DOMContentLoaded', function() {
-    // Categorias
-    const categoryLabels = [{% for cat in category_stats %}"{{ cat.name }}"{% if not loop.last %},{% endif %}{% endfor %}];
-    const categoryTotals = [{% for cat in category_stats %}{{ cat.total }}{% if not loop.last %},{% endif %}{% endfor %}];
-    const categoryCompleted = [{% for cat in category_stats %}{{ cat.completed }}{% if not loop.last %},{% endif %}{% endfor %}];
+    // Dados para os gráficos
+    var categoryLabels = [{% for cat in category_stats %}"{{ cat.name }}"{% if not loop.last %},{% endif %}{% endfor %}];
+    var categoryTotals = [{% for cat in category_stats %}{{ cat.count }}{% if not loop.last %},{% endif %}{% endfor %}];
+    var categoryCompleted = [{% for cat in category_stats %}{{ cat.completed }}{% if not loop.last %},{% endif %}{% endfor %}];
     
     // Gráfico de categorias
-    const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
+    var categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
     new Chart(categoriesCtx, {
         type: 'bar',
         data: {
@@ -161,13 +159,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Gráfico de tarefas atrasadas
-    const overdueCtx = document.getElementById('overdueChart').getContext('2d');
+    var overdueCtx = document.getElementById('overdueChart').getContext('2d');
+    var notOverdueTasks = {{ total_tasks - completed_tasks - overdue_tasks }};
+    var overdueTasks = {{ overdue_tasks }};
+    
     new Chart(overdueCtx, {
         type: 'pie',
         data: {
             labels: ['No Prazo', 'Atrasadas'],
             datasets: [{
-                data: [{{ total_tasks - completed_tasks - overdue_tasks }}, {{ overdue_tasks }}],
+                data: [notOverdueTasks, overdueTasks],
                 backgroundColor: [
                     'rgba(75, 192, 192, 0.5)',
                     'rgba(255, 99, 132, 0.5)'

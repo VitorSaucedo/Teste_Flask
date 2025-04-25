@@ -46,9 +46,9 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="tags" class="form-label">Tags (separadas por vírgula)</label>
-                        <input type="text" class="form-control" name="tags" id="tags" 
-                               value="{{ task.tags }}" placeholder="trabalho, urgente, etc">
+                        <label for="tags" class="form-label">Tags (separadas por vírgula):</label>
+                        <input type="text" class="form-control" id="tags" name="tags" 
+                               value="{{ task.tags }}" placeholder="trabalho, pessoal, importante, etc">
                     </div>
                 </div>
             </div>
@@ -57,6 +57,49 @@
                 <label for="description" class="form-label">Descrição</label>
                 <textarea class="form-control" name="description" id="description" rows="3" 
                           placeholder="Detalhes adicionais da tarefa...">{{ task.description }}</textarea>
+            </div>
+            
+            <!-- Seção de Subtarefas -->
+            <div class="card mb-4 mt-4">
+                <div class="card-header subtasks-header">
+                    <h5 class="mb-0">Subtarefas</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Lista de subtarefas existentes -->
+                    {% if task.subtasks|length > 0 %}
+                    <ul class="list-group mb-3">
+                        {% for subtask in task.subtasks %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <a href="{{ url_for('complete_subtask', subtask_id=subtask.id, todo_id=task.id) }}" 
+                                   class="text-decoration-none text-dark subtask-complete-link"
+                                   data-subtask-id="{{ subtask.id }}" data-todo-id="{{ task.id }}">
+                                    <i class="fas {% if subtask.completed %}fa-check-circle text-success{% else %}fa-circle text-secondary{% endif %} me-2"></i>
+                                    <span {% if subtask.completed %}class="text-decoration-line-through text-muted"{% endif %} id="subtask-content-{{ subtask.id }}">
+                                        {{ subtask.content }}
+                                    </span>
+                                </a>
+                            </div>
+                            <a href="{{ url_for('delete_subtask', subtask_id=subtask.id, todo_id=task.id) }}" 
+                               class="btn btn-sm text-danger" title="Excluir subtarefa">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted small">Nenhuma subtarefa adicionada.</p>
+                    {% endif %}
+
+                    <!-- Formulário para adicionar nova subtarefa -->
+                    <form action="{{ url_for('add_subtask', todo_id=task.id) }}" method="POST" class="d-flex">
+                        <input type="text" name="subtask_content" class="form-control me-2" 
+                               placeholder="Adicionar nova subtarefa" required>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </form>
+                </div>
             </div>
             
             <div class="d-flex justify-content-between">
@@ -93,6 +136,44 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // Marcar subtarefas como concluídas sem recarregar a página
+    document.querySelectorAll('.subtask-complete-link').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const subtaskId = this.getAttribute('data-subtask-id');
+            const todoId = this.getAttribute('data-todo-id');
+            const iconElement = this.querySelector('i');
+            const contentElement = this.querySelector('span');
+            
+            // Enviar requisição AJAX
+            fetch(this.href, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Atualizar interface
+                    if (data.completed) {
+                        iconElement.classList.remove('fa-circle', 'text-secondary');
+                        iconElement.classList.add('fa-check-circle', 'text-success');
+                        contentElement.classList.add('text-decoration-line-through', 'text-muted');
+                    } else {
+                        iconElement.classList.remove('fa-check-circle', 'text-success');
+                        iconElement.classList.add('fa-circle', 'text-secondary');
+                        contentElement.classList.remove('text-decoration-line-through', 'text-muted');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao atualizar subtarefa:', error);
+            });
+        });
+    });
 });
 </script>
 {% endblock %} 

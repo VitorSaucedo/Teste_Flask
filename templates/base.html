@@ -21,9 +21,29 @@
                             <h2 class="mb-0 fw-bold">
                                 <i class="fas fa-check-circle me-2"></i>Lista de Tarefas
                             </h2>
-                            <div class="date-display small">
-                                <i class="far fa-calendar-alt me-1"></i>
-                                <span id="current-date"></span>
+                            <div class="d-flex align-items-center">
+                                <div class="date-display small me-3">
+                                    <i class="far fa-calendar-alt me-1"></i>
+                                    <span id="current-date"></span>
+                                </div>
+                                <div class="dropdown">
+                                    {% if current_user.is_authenticated %}
+                                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-user-circle me-1"></i>
+                                        {{ current_user.username }}
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                        <li><a class="dropdown-item" href="{{ url_for('profile') }}">Perfil</a></li>
+                                        <li><a class="dropdown-item" href="{{ url_for('statistics') }}">Estatísticas</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="{{ url_for('logout') }}">Sair</a></li>
+                                    </ul>
+                                    {% else %}
+                                    <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-sign-in-alt me-1"></i> Entrar
+                                    </a>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
