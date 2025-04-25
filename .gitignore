@@ -1,0 +1,68 @@
+# Arquivos e diretórios específicos do Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Ambiente virtual
+venv/
+env/
+ENV/
+.env
+
+# Arquivos específicos do Flask
+instance/
+.webassets-cache
+.flaskenv
+
+# Bancos de dados
+*.sqlite
+# Não ignorar todo.db aqui se desejar incluir no controle de versão
+
+# Logs
+logs/
+*.log
+
+# Arquivos de IDE e editores
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.directory
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Outros
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+.nox/
+.hypothesis/
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/ 

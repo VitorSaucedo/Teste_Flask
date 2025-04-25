@@ -1,16 +1,18 @@
 # Lista de Tarefas (Todo List)
 
-Uma aplicação completa de lista de tarefas desenvolvida com Flask, proporcionando diversas funcionalidades para gerenciar suas tarefas de forma eficiente.
+Uma aplicação web completa para gerenciamento de tarefas desenvolvida com Flask. Este sistema oferece uma interface intuitiva e funcionalidades avançadas para organizar suas atividades diárias de forma eficiente.
 
 ## Funcionalidades
 
+- **Autenticação de Usuários**: Sistema completo de registro, login e gerenciamento de perfil
 - **Tarefas**: Adicionar, editar, concluir e excluir tarefas
-- **Categorias**: Organizar tarefas por categorias personalizáveis
-- **Prioridades**: Definir prioridades (Alta, Média, Baixa) para tarefas
-- **Datas de Vencimento**: Estabelecer prazos para conclusão
+- **Subtarefas**: Criar e gerenciar itens subordinados a uma tarefa principal
+- **Categorias**: Organizar tarefas por categorias personalizáveis 
+- **Prioridades**: Definir níveis de prioridade (Alta, Média, Baixa)
+- **Datas de Vencimento**: Estabelecer prazos para conclusão das tarefas
 - **Tags**: Adicionar etiquetas para facilitar a busca e organização
 - **Descrições**: Incluir detalhes adicionais para cada tarefa
-- **Filtragem**: Filtrar tarefas por categoria e prioridade
+- **Filtragem**: Filtrar tarefas por categoria, prioridade e status
 - **Pesquisa**: Buscar tarefas específicas por conteúdo, descrição ou tags
 - **Estatísticas**: Visualizar dados sobre suas tarefas e taxa de conclusão
 - **Tema Escuro/Claro**: Alternar entre os temas conforme preferência
@@ -19,24 +21,29 @@ Uma aplicação completa de lista de tarefas desenvolvida com Flask, proporciona
 
 ## Tecnologias Utilizadas
 
-- Python 3
-- Flask
-- SQLAlchemy
-- SQLite
-- Bootstrap 5
-- Chart.js
-- Font Awesome
-- HTML/CSS/JavaScript
+- **Backend**:
+  - Python 3
+  - Flask
+  - SQLAlchemy (ORM)
+  - Flask-Login (Autenticação)
+  - Werkzeug (Segurança e utilitários)
+- **Banco de Dados**:
+  - SQLite
+- **Frontend**:
+  - Bootstrap 5
+  - Chart.js (Visualização de dados)
+  - Font Awesome (Ícones)
+  - HTML/CSS/JavaScript
 
 ## Requisitos
 
 - Python 3.8 ou superior
-- Pacotes listados em requirements.txt
+- Pacotes Python listados em `requirements.txt`
 
 ## Instalação
 
 1. Clone este repositório
-2. Crie e ative um ambiente virtual (opcional):
+2. Crie e ative um ambiente virtual (recomendado):
    ```
    python -m venv venv
    venv\Scripts\activate  # Windows
@@ -54,24 +61,36 @@ Uma aplicação completa de lista de tarefas desenvolvida com Flask, proporciona
 
 ## Estrutura do Projeto
 
-- `app.py`: Arquivo principal da aplicação Flask com rotas e modelo de dados
+- `app.py`: Aplicação principal Flask (rotas, modelos e lógica de negócio)
+- `create_db.py`: Script para criação inicial do banco de dados
+- `requirements.txt`: Lista de dependências do projeto
 - `templates/`: Diretório contendo os templates HTML
   - `base.html`: Template base com layout comum
   - `index.html`: Página principal com a lista de tarefas
   - `update.html`: Página para editar tarefas
+  - `login.html`: Página de login
+  - `register.html`: Página de registro de usuários
+  - `profile.html`: Página de perfil do usuário
   - `statistics.html`: Página de estatísticas e gráficos
-- `static/`: Diretório contendo arquivos estáticos
-  - `style.css`: Estilos CSS da aplicação
-  - `theme.js`: JavaScript para alternar entre temas claro/escuro
-- `todo.db`: Banco de dados SQLite para armazenamento das tarefas
+  - `_task_item.html`: Componente de item de tarefa
+  - `_task_list.html`: Componente de lista de tarefas
+- `static/`: Diretório contendo arquivos estáticos (CSS, JS, imagens)
+- `instance/`: Diretório contendo arquivos de instância da aplicação
+- `todo.db`: Banco de dados SQLite para armazenamento dos dados
+
+## Modelos de Dados
+
+- **User**: Usuários do sistema com autenticação
+- **Todo**: Tarefas principais com propriedades como título, descrição, categoria, etc.
+- **Subtask**: Subtarefas vinculadas às tarefas principais
 
 ## Futuras Melhorias
 
-- Sistema de autenticação de usuários (Implementado)
-- Subtarefas (Implementado)
-- Integração com calendário
-- Notificações e lembretes
-- Versão mobile
+- Integração com calendário para visualização de tarefas
+- Notificações e lembretes de tarefas próximas do vencimento
+- Compartilhamento de tarefas entre usuários
+- Sincronização com dispositivos móveis
+- API completa para integração com outros sistemas
 
 ## Licença
 
