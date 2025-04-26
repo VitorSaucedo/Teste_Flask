@@ -498,6 +498,75 @@ canvas {
 .progress-width-56 { width: 56%; }
 .progress-width-57 { width: 57%; }
 .progress-width-58 { width: 58%; }
+
+/* Estilos para as melhorias de usabilidade */
+.spinner-border {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    vertical-align: text-bottom;
+    border: 0.2em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border .75s linear infinite;
+}
+
+@keyframes spinner-border {
+    to { transform: rotate(360deg); }
+}
+
+.toast {
+    z-index: 1000;
+    min-width: 250px;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+.dark-mode {
+    background-color: #1a1a1a;
+    color: #f8f9fa;
+}
+
+.dark-mode .card {
+    background-color: #2d2d2d;
+}
+
+.dark-mode .form-control {
+    background-color: #2d2d2d;
+    color: #f8f9fa;
+    border-color: #3d3d3d;
+}
+
+.dark-mode .list-group-item {
+    background-color: #2d2d2d;
+    color: #f8f9fa;
+}
+
+.dark-mode .todo-item:hover {
+    background-color: #3d3d3d;
+}
+
+/* Estilos para o campo de busca */
+.search-container {
+    margin-bottom: 1rem;
+}
+
+.search-container input {
+    border-radius: 20px;
+    padding-left: 1.5rem;
+}
+
+.search-container .search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
 .progress-width-59 { width: 59%; }
 .progress-width-60 { width: 60%; }
 .progress-width-61 { width: 61%; }
